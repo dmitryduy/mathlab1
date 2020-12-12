@@ -2,7 +2,7 @@
 #include "RapidBody.h"
 static double *y = new double[18];
 static double* m = new double[16];
-RapidBody *rb = new RapidBody(1,2,1,50,1);
+RapidBody *rb =  new RapidBody(1.0,2.0,1.0,5,0.5, 1.5);
 
 void reshape(GLsizei width, GLsizei height) {  // GLsizei for non-negative integer
     // Compute aspect ratio of the new window
@@ -17,7 +17,7 @@ void reshape(GLsizei width, GLsizei height) {  // GLsizei for non-negative integ
     glLoadIdentity();             // Reset
     // Enable perspective projection with fovy, aspect, zNear and zFar
     //gluPerspective(45.0f, aspect, 0.1f, 100.0f);
-    gluPerspective(30.0f, aspect, 1.0f, 1000.0f);
+    gluPerspective(30.0f, aspect, 1.0f, 100.0f);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     gluLookAt(0,100,0,0,0,0,0,0,1);
@@ -44,7 +44,7 @@ void initGL() {
 
 void timer(int value) {
     glutPostRedisplay();      // Post re-paint request to activate display()
-    // glutTimerFunc(refreshMills, timer, 0); // next timer call milliseconds later
+     //glutTimerFunc(15, timer, 0); // next timer call milliseconds later
 }
 void display() {
     Pyramid *pyramid = new Pyramid();
@@ -60,7 +60,7 @@ void display() {
         m[1+i*4]=y[6+i];
         m[2+i*4]=y[9+i];
     }
-    glTranslated(y[0], y[1], -14 + y[2]);
+    glTranslated(y[0], y[1], -10 + y[2]);
     glMultMatrixd(m);
     //glLoadMatrixd(m);
 
@@ -70,14 +70,19 @@ void display() {
     pyramid->DrawPyramid(rb);
 
     glutSwapBuffers();
-    glutTimerFunc(10, timer, 0);
+    glutTimerFunc(15, timer, 0);
 }
 
 /* Handler for window re-size event. Called back when the window first appears and
    whenever the window is re-sized with its new width and height */
 
 int main(int argc, char** argv) {
-    RapidBody *rb  = new RapidBody(1,2,1,10,2);
+    std::cout<<"enter mass of torus\n";
+    std::cin>>rb->mass;
+    std::cout<<"enter inner radius\n";
+    std::cin>>rb->innerRadius;
+    std::cout<<"enter outer radius\n";
+    std::cin>>rb->outerRadius;
     glutInit(&argc, argv);            // Initialize GLUT
     glutInitDisplayMode(GLUT_DOUBLE| GLUT_RGB| GLUT_DEPTH); // Enable double buffered mode
     glutCreateWindow("h");          // Create window with the given title
