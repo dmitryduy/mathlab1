@@ -203,6 +203,7 @@ void RapidBody::mul(double *m1, double m2) {
 
 void RapidBody::printInvariant(){
     std::cout<<"Value: ";
+    std::cout.precision(11);
     std::cout<<0.5*mass*v.transpose()*v+0.5*omega.transpose()*L<<" (time: "<<timeRB<<")"<<"\n";
 }
 

@@ -77,12 +77,36 @@ void display() {
    whenever the window is re-sized with its new width and height */
 
 int main(int argc, char** argv) {
-    std::cout<<"enter mass of torus\n";
-    std::cin>>rb->mass;
-    std::cout<<"enter inner radius\n";
-    std::cin>>rb->innerRadius;
-    std::cout<<"enter outer radius\n";
-    std::cin>>rb->outerRadius;
+    std::string tmp;
+    std::cout<<"enter mass of torus(in range(0;10]). If you want to set mass by default, just press'q'\n";
+    std::cin>>tmp;
+    if (tmp == "q") std::cout<<"mass set by default (10)\n";
+    else {
+        if (std::stod(tmp)<=0 || std::stod(tmp) >10) {
+            std::cout<<"mass must be in range (0,10], mass will be set by default (10)\n";
+        }
+        else rb->mass =  std::stod(tmp);
+    }
+
+    std::cout<<"enter inner radius(in range [0.5, 1]. If you want to set mass by default(0.5), just press'q'\n";
+    std::cin>>tmp;
+    if (tmp == "q") std::cout<<"inner radius set by default (0.5)\n";
+    else {
+        if (std::stod(tmp)<0.5 || std::stod(tmp) >1) {
+            std::cout<<"inner radius must be in range [0.5,1], inner radius will be set by default (0.5)\n";
+        }
+        else rb->innerRadius =  std::stod(tmp);
+    }
+
+    std::cout<<"enter outer radius(in range [1, 2]). If you want to set mass by default(1.5), just press'q'\n";
+    std::cin>>tmp;
+    if (tmp == "q") std::cout<<"outer radius set by default (0.5)\n";
+    else {
+        if (std::stod(tmp)<1 || std::stod(tmp) >2) {
+            std::cout<<"outer radius must be in range [1,2], outer radius will be set by default (1.5)\n";
+        }
+        else rb->outerRadius =  std::stod(tmp);
+    }
     glutInit(&argc, argv);            // Initialize GLUT
     glutInitDisplayMode(GLUT_DOUBLE| GLUT_RGB| GLUT_DEPTH); // Enable double buffered mode
     glutCreateWindow("h");          // Create window with the given title
