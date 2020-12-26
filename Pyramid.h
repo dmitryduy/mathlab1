@@ -4,10 +4,12 @@
 #include "GL/glut.h"
 #include "RapidBody.h"
 #include <iostream>
-class Pyramid {
-public:
-    void DrawPyramid(RapidBody *rb);
-};
+
+
+void reshape(GLsizei width, GLsizei height);
+void display();
+void initGL();
+void timer(int value);
 
 
 #endif
