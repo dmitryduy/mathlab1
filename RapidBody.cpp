@@ -66,20 +66,13 @@ void init(RigidBody* rb) {
             }
         }
     }
-    std::cout<<rb->outerRadius - rb->innerRadius<<std::endl;
-    std::cout<<rb->mass*(5.0/8.0*0.25*(rb->outerRadius - rb->innerRadius)*(rb->outerRadius - rb->innerRadius) + 0.5*0.25*(rb->outerRadius+rb->innerRadius)*(rb->outerRadius+rb->innerRadius))<<"---------------\n";
-    std::cout<<rb->mass*(3.0/4.0*0.25*(rb->outerRadius - rb->innerRadius)*(rb->outerRadius - rb->innerRadius) + 0.25*(rb->outerRadius+rb->innerRadius)*(rb->outerRadius+rb->innerRadius))<<std::endl;
-     /* rb->IBody<<rb->mass*(5.0/8.0*0.25*(rb->outerRadius - rb->innerRadius)*(rb->outerRadius - rb->innerRadius) + 0.5*0.25*(rb->outerRadius+rb->innerRadius)*(rb->outerRadius+rb->innerRadius)),0,0,
-            0,rb->mass*(5.0/8.0*0.25*(rb->outerRadius - rb->innerRadius)*(rb->outerRadius - rb->innerRadius) + 0.5*0.25*(rb->outerRadius+rb->innerRadius)*(rb->outerRadius+rb->innerRadius)),0,
-            0,0,rb->mass*(3.0/4.0*0.25*(rb->outerRadius - rb->innerRadius)*(rb->outerRadius - rb->innerRadius) +0.25*(rb->outerRadius+rb->innerRadius)*(rb->outerRadius+rb->innerRadius));
-    */
      rb->IBody<<rb->mass/8.0*(5*rb->innerRadius*rb->innerRadius + 4*rb->outerRadius*rb->outerRadius),0,0,
      0,rb->mass/8.0*(5*rb->innerRadius*rb->innerRadius + 4*rb->outerRadius*rb->outerRadius),0,
      0,0,rb->mass/8.0*(5*rb->innerRadius*rb->innerRadius + 4*rb->outerRadius*rb->outerRadius);
-     rb->IBodyInv = rb->IBody.reverse();
+     rb->IBodyInv = rb->IBody.inverse();
     rb->x = {0, 0, 0};
     rb->P = {0, 0, 0};
-    rb->L = {0.5, 0.5, 0.2};
+    rb->L = {2, 1,  1};
     double y[18];
     for (double &j : y) {
         j = 0;
@@ -179,7 +172,7 @@ void mul(double *m1, double m2) {
         m1[i]+= m2;
 }
 
-void ode(RigidBody *rb, double *y0, double *yFinal, int len, double t0, double t1) {
+void ode(RigidBody *rb, double *y0, double *yEnd, int len, double t0, double t1) {
     double h = t1 - t0;
 
 
@@ -241,7 +234,7 @@ void ode(RigidBody *rb, double *y0, double *yFinal, int len, double t0, double t
     //y0 += h * ( g1 * k1 + g2 * k2 + g3 * k3 + g4 * k4 );
     for (int i = 0; i < len; i++)
     {
-        yFinal[i] = y0[i] + h * (g1 * k1[i] + g2 * k2[i] + g3 * k3[i] + g4 * k4[i]);
+        yEnd[i] = y0[i] + h * (g1 * k1[i] + g2 * k2[i] + g3 * k3[i] + g4 * k4[i]);
     }
 
 }
@@ -256,10 +249,6 @@ void runSimulation(RigidBody *rb, double *x) {
     timeRB+=0.025;
     printInvariant(rb);
     double y[18], yEnd[18];
-    for (int i = 0; i < 18; i++) {
-        y[i] = 0;
-        yEnd[18] = 0;
-    }
 
     stateToArray(rb, y);
 
