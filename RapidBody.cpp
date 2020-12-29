@@ -17,42 +17,42 @@ static const double g4 = (30.0 - 4.0 * SQRT5) / 123.0;
 
 void init(RigidBody* rb) {
     std::string tmp;
-    std::cout<<"enter mass of torus(in range(0;10]). If you want to set mass by default, just press'q'\n";
+    std::cout<<"enter mass of torus(in range[1;10]). If you want to set mass by default, just press'q'\n";
     std::cin>>tmp;
     if (tmp == "q") {
-        std::cout<<"mass set by default (10)\n";
-        rb->mass = 10;
+        std::cout<<"mass set by default (1.5)\n";
+        rb->mass = 1.5;
     }
     else {
-        if (std::stod(tmp)<=0 || std::stod(tmp) >10) {
-            std::cout<<"mass must be in range (0,10], mass will be set by default (10)\n";
-            rb->mass = 10;
+        if (std::stod(tmp)<1 || std::stod(tmp) >10) {
+            std::cout<<"mass must be in range [1,10], mass will be set by default (1.5)\n";
+            rb->mass = 1.5;
         }
         else rb->mass =  std::stod(tmp);
     }
 
-    std::cout<<"enter inner radius(in range [0.1, 0.5]. If you want to set mass by default(0.5), just press'q'\n";
+    std::cout<<"enter inner radius(in range [1, 2]. If you want to set mass by default(1), just press'q'\n";
     std::cin>>tmp;
     if (tmp == "q") {
-        std::cout<<"inner radius set by default (0.5)\n";
-        rb->innerRadius = 0.3;
+        std::cout<<"inner radius set by default (1)\n";
+        rb->innerRadius = 1;
     }
     else {
-        if (std::stod(tmp)<0.1 || std::stod(tmp) >0.5) {
-            std::cout<<"inner radius must be in range [0.1,0.5], inner radius will be set by default (0.5)\n";
+        if (std::stod(tmp)<1 || std::stod(tmp) >2) {
+            std::cout<<"inner radius must be in range [1,2], inner radius will be set by default (2)\n";
         }
         else rb->innerRadius =  std::stod(tmp);
     }
 
-    std::cout<<"enter outer radius(in range [0.5, 1]). If you want to set mass by default(0.6), just press'q'\n";
+    std::cout<<"enter outer radius(in range [1, 2]). If you want to set mass by default(2), just press'q'\n";
     std::cin>>tmp;
     if (tmp == "q") {
-        std::cout<<"outer radius set by default (0.6)\n";
-        rb->outerRadius = 0.6;
+        std::cout<<"outer radius set by default (2)\n";
+        rb->outerRadius = 2;
     }
     else {
-        if (std::stod(tmp)<0.5 || std::stod(tmp) >1) {
-            std::cout<<"outer radius must be in range [0.5,1], outer radius will be set by default (0.6)\n";
+        if (std::stod(tmp)<1 || std::stod(tmp) >2) {
+            std::cout<<"outer radius must be in range [1,2], outer radius will be set by default (2)\n";
         }
         else rb->outerRadius =  std::stod(tmp);
     }
@@ -72,7 +72,7 @@ void init(RigidBody* rb) {
      rb->IBodyInv = rb->IBody.inverse();
     rb->x = {0, 0, 0};
     rb->P = {0, 0, 0};
-    rb->L = {2, 2,  2};
+    rb->L = {2, 2,  1};
     double y[18];
     for (double &j : y) {
         j = 0;
@@ -114,8 +114,8 @@ void arrayToState(RigidBody *rb, double *y) {
     rb->L[1] = *y++;
     rb->L[2] = *y++;
 
-    rb->v = rb->P*(1/ rb->mass);
-    rb->Iinv = rb->R * rb->IBodyInv * rb->R.transpose();
+    rb->v = rb->P/ rb->mass;
+    rb->Iinv = rb->R * rb->IBodyInv *rb->R.transpose();
     rb->omega = rb->Iinv * rb->L;
 
 }
@@ -145,6 +145,7 @@ void ddtStateToArray(double *xdot, RigidBody *rb) {
     *xdot++ = rb->force[0];
     *xdot++ = rb->force[1];
     *xdot++ = rb->force[2];
+
     *xdot++ = rb->torque[0];
     *xdot++ = rb->torque[1];
     *xdot++ = rb->torque[2];
@@ -244,16 +245,17 @@ void printInvariant(RigidBody *rb){
 }
 
 void runSimulation(RigidBody *rb, double *x) {
-    timeRB+=0.002*rb->mass;
-   printInvariant(rb);
+   /* timeRB+=0.002*rb->mass;*/
+   timeRB += 0.025;
+    printInvariant(rb);
     double y[18], yEnd[18];
 
-   stateToArray(rb, y);
+   stateToArray(rb, yEnd);
 
-    ode(rb, y, yEnd, 18, timeRB-0.002*rb->mass, timeRB);
+   for (int i = 0 ; i < 18; i++) y[i] = yEnd[i];
+    ode(rb, y, yEnd, 18, timeRB-0.025, timeRB);
 
     arrayToState(rb, yEnd);
-
     Vector3d v1 = rb->R.col(0);
     Vector3d v2 = rb->R.col(1);
     Vector3d v3 = rb->R.col(2);

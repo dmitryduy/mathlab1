@@ -33,6 +33,7 @@ struct RigidBody {
 static RigidBody *rb = new RigidBody();
 
 static double timeRB = 0;
+
     void init(RigidBody* rb);
     void stateToArray(RigidBody *rb, double *y);
     void arrayToState(RigidBody *rb, double *y);

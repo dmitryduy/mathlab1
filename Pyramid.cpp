@@ -57,16 +57,14 @@ void display() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear color and depth buffers
     glMatrixMode(GL_MODELVIEW);     // To operate on model-view matrix
 
-    // Render a color-cube consisting of 6 quads with different colors
     glLoadIdentity();                 // Reset the model-view matrix
     for (int i = 0; i < 3; i++) {
         m[0+i*4]=y[3+i];
         m[1+i*4]=y[6+i];
         m[2+i*4]=y[9+i];
     }
-    glTranslated(y[0], y[1], -5+ y[2]);
+    glTranslated(y[0], y[1], -12+ y[2]);
     glMultMatrixd(m);
-    //glLoadMatrixd(m);
 
 
 
