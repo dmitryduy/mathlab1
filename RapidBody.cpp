@@ -72,7 +72,7 @@ void init(RigidBody* rb) {
      rb->IBodyInv = rb->IBody.inverse();
     rb->x = {0, 0, 0};
     rb->P = {0, 0, 0};
-    rb->L = {2, 1,  1};
+    rb->L = {2, 2,  2};
     double y[18];
     for (double &j : y) {
         j = 0;
@@ -138,7 +138,6 @@ void ddtStateToArray(double *xdot, RigidBody *rb) {
     *xdot++ = rb->v[0];
     *xdot++ = rb->v[1];
     *xdot++ = rb->v[2];
-
     Matrix3d Rdot = star(rb->omega) * rb->R;
     for (int i = 0; i < 3; i++)
         for (int j = 0; j < 3; j++)
@@ -236,7 +235,6 @@ void ode(RigidBody *rb, double *y0, double *yEnd, int len, double t0, double t1)
     {
         yEnd[i] = y0[i] + h * (g1 * k1[i] + g2 * k2[i] + g3 * k3[i] + g4 * k4[i]);
     }
-
 }
 
 void printInvariant(RigidBody *rb){
@@ -246,13 +244,13 @@ void printInvariant(RigidBody *rb){
 }
 
 void runSimulation(RigidBody *rb, double *x) {
-    timeRB+=0.025;
-    printInvariant(rb);
+    timeRB+=0.002*rb->mass;
+   printInvariant(rb);
     double y[18], yEnd[18];
 
-    stateToArray(rb, y);
+   stateToArray(rb, y);
 
-    ode(rb, y, yEnd, 18, timeRB-0.025, timeRB);
+    ode(rb, y, yEnd, 18, timeRB-0.002*rb->mass, timeRB);
 
     arrayToState(rb, yEnd);
 
@@ -260,9 +258,9 @@ void runSimulation(RigidBody *rb, double *x) {
     Vector3d v2 = rb->R.col(1);
     Vector3d v3 = rb->R.col(2);
     v1.normalize();
-    v2=v2-(v1[0]*v2[0]+v1[1]*v2[1]+v1[2]*v2[2])*v1;
+    v2=v2-(v1[0]*v2[0]+v1[1]*v2[1]+v1[2]*v2[2])/(v1[0]*v1[0] + v1[1]*v1[1] + v1[2]*v1[2])*v1;
     v2.normalize();
-    v3 = v3-(v1[0]*v3[0]+v1[1]*v3[1]+v1[2]*v3[2])*v1-(v3[0]*v2[0]+v3[1]*v2[1]+v3[2]*v2[2])*v2;
+    v3 = v3-(v1[0]*v3[0]+v1[1]*v3[1]+v1[2]*v3[2])/(v1[0]*v1[0] + v1[1]*v1[1] + v1[2]*v1[2])*v1-(v3[0]*v2[0]+v3[1]*v2[1]+v3[2]*v2[2])/(v2[0]*v2[0] + v2[1]*v2[1]+v2[2]*v2[2])*v2;
     v3.normalize();
     rb->R.col(0)=v1;
     rb->R.col(1)=v2;

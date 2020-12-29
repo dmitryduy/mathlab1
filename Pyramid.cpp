@@ -64,7 +64,7 @@ void display() {
         m[1+i*4]=y[6+i];
         m[2+i*4]=y[9+i];
     }
-    glTranslated(y[0], y[1], -4+ y[2]);
+    glTranslated(y[0], y[1], -5+ y[2]);
     glMultMatrixd(m);
     //glLoadMatrixd(m);
 
